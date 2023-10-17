@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd40bae31603c124ba65d484e8258c8b, type: 3}
+  m_Name: PlayerData_V1
+  m_EditorClassIdentifier: 
+  _playerStatistics:
+  - _statName: 0
+    _statCurrentValue: 100
+    _statMaxValue: 100
+  - _statName: 1
+    _statCurrentValue: 100
+    _statMaxValue: 100
+  - _statName: 2
+    _statCurrentValue: 0
+    _statMaxValue: 10
+  - _statName: 3
+    _statCurrentValue: 3
+    _statMaxValue: 3
+  - _statName: 4
+    _statCurrentValue: 6
+    _statMaxValue: 6
+  _inputsSmoothing: 4
+  _jumpSpeed: 6
+  _lookSpeed: 2
+  _runningFOV: 65
+  _speedToFOV: 4
+  _timeToRunning: 2
