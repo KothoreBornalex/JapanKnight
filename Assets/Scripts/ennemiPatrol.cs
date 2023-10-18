@@ -6,7 +6,7 @@ public class ennemiPatrol : MonoBehaviour
 {
     //METTRE CE SCRIPT SUR LES ENNEMIS
 
-    public float speed = 2f;                                            // Vitesse de déplacement ennemi
+    [Range(0,50)] public float speed;                                            // Vitesse de déplacement ennemi
     [SerializeField, Range(0.1f, 50f)] private float limiteDroite = 1f; // distance entre l'ennemi et la limite de patrouille à droite (limité entre 0.1 et 50)
     [SerializeField, Range(0.1f, 50f)] private float limiteGauche = 1f; // distance entre l'ennemi et la limite de patrouille à gauche (limité entre 0.1 et 50)
     private Vector3 limiteDroitePosition;                               // Sert a transformer la distance avec la limite droite en coordonnées X/Y/Z

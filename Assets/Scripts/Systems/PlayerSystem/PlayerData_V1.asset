@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerStatistics:
   - _statName: 0
-    _statCurrentValue: 100
-    _statMaxValue: 100
+    _statCurrentValue: 2
+    _statMaxValue: 2
   - _statName: 1
     _statCurrentValue: 100
     _statMaxValue: 100
