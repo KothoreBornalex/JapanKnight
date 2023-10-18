@@ -12,7 +12,7 @@ namespace Meryel.UnityCodeAssist.Editor
 {
     public class Assister
     {
-        public const string Version = "1.0.0.21";
+        public const string Version = "1.1.9";
 
 #if MERYEL_UCA_LITE_VERSION
         public const string Title = "Code Assist Lite";
@@ -39,10 +39,16 @@ namespace Meryel.UnityCodeAssist.Editor
         }
 
 
-        [MenuItem("Tools/" + Title + "/Report error", false, 3)]
+        [MenuItem("Tools/" + Title + "/Report error", false, 51)]
         static void DisplayFeedbackWindow()
         {
             FeedbackWindow.Display();
+        }
+
+        [MenuItem("Tools/" + Title + "/About", false, 52)]
+        static void DisplayAboutWindow()
+        {
+            AboutWindow.Display();
         }
 
 #if MERYEL_UCA_LITE_VERSION
@@ -83,8 +89,24 @@ namespace Meryel.UnityCodeAssist.Editor
                 Serilog.Log.Information("Code Assist is connected to {Dif} new IDE(s).", dif);
         }
 
-
 #if MERYEL_DEBUG
+
+        [MenuItem("Code Assist/Binary2Text")]
+        static void Binary2Text()
+        {
+            var filePath = CommonTools.GetInputManagerFilePath();
+            var hash = Input.UnityInputManager.GetMD5Hash(filePath);
+            var convertedPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"UCA_IM_{hash}.txt");
+            
+            var b = new Input.Binary2TextExec();
+            b.Exec(filePath, convertedPath, detailed: false, largeBinaryHashOnly: false, hexFloat: false);
+        }
+
+        [MenuItem("Code Assist/Bump InputManager")]
+        static void BumpInputManager()
+        {
+            Input.InputManagerMonitor.Instance.Bump();
+        }
 
 
         [MenuItem("Code Assist/Layer Check")]
@@ -92,14 +114,14 @@ namespace Meryel.UnityCodeAssist.Editor
         {
             var names = UnityEditorInternal.InternalEditorUtility.layers;
             var indices = names.Select(l => LayerMask.NameToLayer(l).ToString()).ToArray();
-            NetMQInitializer.Publisher.SendLayers(indices, names);
+            NetMQInitializer.Publisher?.SendLayers(indices, names);
 
             var sls = SortingLayer.layers;
             var sortingNames = sls.Select(sl => sl.name).ToArray();
             var sortingIds = sls.Select(sl => sl.id.ToString()).ToArray();
             var sortingValues = sls.Select(sl => sl.value.ToString()).ToArray();
 
-            NetMQInitializer.Publisher.SendSortingLayers(sortingNames, sortingIds, sortingValues);
+            NetMQInitializer.Publisher?.SendSortingLayers(sortingNames, sortingIds, sortingValues);
 
             /*
             for (var i = 0; i < 32; i++)
@@ -129,7 +151,7 @@ namespace Meryel.UnityCodeAssist.Editor
                 }
             }
 
-            NetMQInitializer.Publisher.SendTags(UnityEditorInternal.InternalEditorUtility.tags);
+            NetMQInitializer.Publisher?.SendTags(UnityEditorInternal.InternalEditorUtility.tags);
 
         }
 
@@ -141,7 +163,7 @@ namespace Meryel.UnityCodeAssist.Editor
             var go = GameObject.Find("Deneme");
             //var go = MonoBehaviour.FindObjectOfType<Deneme>().gameObject;
 
-            NetMQInitializer.Publisher.SendGameObject(go);
+            NetMQInitializer.Publisher?.SendGameObject(go);
         }
 
         [MenuItem("Code Assist/Undo Records Test")]
@@ -199,7 +221,7 @@ namespace Meryel.UnityCodeAssist.Editor
         }
 
 
-
+        /*
         [MenuItem("Code Assist/TEST")]
         static void TEST()
         {
@@ -214,7 +236,7 @@ namespace Meryel.UnityCodeAssist.Editor
 
 
         }
-
+        */
 
 #endif // MERYEL_DEBUG
 

@@ -154,12 +154,12 @@ namespace Meryel.UnityCodeAssist.Editor
                 pubSocket = null;
                 return;
             }
-            
+
 
             //pubSocket.SendReady += PubSocket_SendReady;
             //SendConnect();
 
-            pullTaskCancellationTokenSource  = new CancellationTokenSource();
+            pullTaskCancellationTokenSource = new CancellationTokenSource();
             //pullThread = new System.Threading.Thread(async () => await PullAsync(conn.pushPull, pullThreadCancellationTokenSource.Token));
             //pullThread = new System.Threading.Thread(() => InitPull(conn.pushPull, pullTaskCancellationTokenSource.Token));
             //pullThread.Start();
@@ -171,11 +171,11 @@ namespace Meryel.UnityCodeAssist.Editor
                 System.Threading.Tasks.TaskCreationOptions.LongRunning, System.Threading.Tasks.TaskScheduler.Current);
             */
 
-            
+
             pullTask = Task.Factory.StartNew(
                 () => InitPull(pushPull, pullTaskCancellationTokenSource.Token),
                 System.Threading.Tasks.TaskCreationOptions.LongRunning);
-            
+
             //InitPull(conn.pushPull);
 
             Serilog.Log.Debug("NetMQ server initializing, initialized");
@@ -342,7 +342,7 @@ namespace Meryel.UnityCodeAssist.Editor
         public void SendConnect()
         {
             var connect = Self;
-            
+
             SendAux(connect);
         }
 
@@ -425,11 +425,13 @@ namespace Meryel.UnityCodeAssist.Editor
                     Array = container[i].array
                 };
             }
+
+            SendAux(stringArrayContainer);
         }
 
         public void SendTags(string[] tags) =>
             SendStringArrayAux(Synchronizer.Model.Ids.Tags, tags);
-            
+
         /*
         {
             
@@ -477,6 +479,43 @@ namespace Meryel.UnityCodeAssist.Editor
                 (Synchronizer.Model.Ids.SortingLayers, sortingLayers),
                 (Synchronizer.Model.Ids.SortingLayerIds, sortingLayerIds),
                 (Synchronizer.Model.Ids.SortingLayerValues, sortingLayerValues)
+                );
+        }
+
+        public void SendPlayerPrefs(string[] playerPrefKeys, string[] playerPrefValues,
+            string[] playerPrefStringKeys, string[] playerPrefIntegerKeys, string[] playerPrefFloatKeys)
+        {
+            SendStringArrayContainerAux(
+                (Synchronizer.Model.Ids.PlayerPrefKeys, playerPrefKeys),
+                (Synchronizer.Model.Ids.PlayerPrefValues, playerPrefValues),
+                (Synchronizer.Model.Ids.PlayerPrefStringKeys, playerPrefStringKeys),
+                (Synchronizer.Model.Ids.PlayerPrefIntegerKeys, playerPrefIntegerKeys),
+                (Synchronizer.Model.Ids.PlayerPrefFloatKeys, playerPrefFloatKeys)
+                );
+        }
+
+        public void SendEditorPrefs(string[] editorPrefKeys, string[] editorPrefValues,
+            string[] editorPrefStringKeys, string[] editorPrefIntegerKeys, string[] editorPrefFloatKeys,
+            string[] editorPrefBooleanKeys)
+        {
+            SendStringArrayContainerAux(
+                (Synchronizer.Model.Ids.EditorPrefKeys, editorPrefKeys),
+                (Synchronizer.Model.Ids.EditorPrefValues, editorPrefValues),
+                (Synchronizer.Model.Ids.EditorPrefStringKeys, editorPrefStringKeys),
+                (Synchronizer.Model.Ids.EditorPrefIntegerKeys, editorPrefIntegerKeys),
+                (Synchronizer.Model.Ids.EditorPrefFloatKeys, editorPrefFloatKeys),
+                (Synchronizer.Model.Ids.EditorPrefBooleanKeys, editorPrefBooleanKeys)
+                );
+        }
+
+        public void SendInputManager(string[] axisNames, string[] axisInfos, string[] buttonKeys, string[] buttonAxis, string[] joystickNames)
+        {
+            SendStringArrayContainerAux(
+                (Synchronizer.Model.Ids.InputManagerAxes, axisNames),
+                (Synchronizer.Model.Ids.InputManagerAxisInfos, axisInfos),
+                (Synchronizer.Model.Ids.InputManagerButtonKeys, buttonKeys),
+                (Synchronizer.Model.Ids.InputManagerButtonAxis, buttonAxis),
+                (Synchronizer.Model.Ids.InputManagerJoystickNames, joystickNames)
                 );
         }
 
@@ -740,6 +779,14 @@ namespace Meryel.UnityCodeAssist.Editor
         {
             Serilog.Log.Warning("Unity/Server shouldn't call Synchronizer.Model.IProcessor.Process(Synchronizer.Model.RequestVerboseType)");
         }
+
+        void Synchronizer.Model.IProcessor.Process(Synchronizer.Model.RequestLazyLoad requestLazyLoad)
+        {
+            Monitor.LazyLoad(requestLazyLoad.Category);
+        }
+
+
+
     }
 }
 

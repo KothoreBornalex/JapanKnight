@@ -1,92 +1,107 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static IStatistics;
 
 public class enemyAttack : MonoBehaviour
 {
-    public int degats = 1;
-    public float cooldown = 0.5f;
-    public Transform weapon;
-    public float rayonAttack = 0.5f;
+    [Header("AI Fields")]
+    public Transform[] waypoints;
+    [Range(0, 5)] public int degats = 1;
 
-    private Collider2D[] colls;
-    private bool reloading;
-    private bool VUE;
-    private Animator anim;
-    private SpriteRenderer monSprite;
-    private Vector3 weaponPos;
+    private int currentIndex;
 
-    public GameObject effect;
-    private GameObject effectSave;
-    private Vector2 direction;
-    private float angleEffect;
 
-    private Collider2D coll;
+    private float timer;
+    [Range(0, 5)] public float cooldown;
 
-    private ennemiPatrol patPatrol;
 
 
     void Start() {
-        anim = GetComponent<Animator>();
-        monSprite = GetComponentInChildren<SpriteRenderer>();
-        weaponPos = weapon.localPosition;
-        coll = GetComponent<Collider2D>();
-        patPatrol = GetComponent<ennemiPatrol>();
+
     }
 
-    void Update() {
-        if (monSprite.flipX) {
-            weapon.localPosition = new Vector3(-weaponPos.x, weaponPos.y, 0);
-        } else {
-            weapon.localPosition = new Vector3(weaponPos.x, weaponPos.y, 0);
+    void Update()
+    {
+        Patrol();
+        HandleAttack();
+    }
+
+
+    public float GetDistance()
+    {
+        return Vector2.Distance(transform.position, PlayerStateMachine.instance.transform.position);
+    }
+
+    public bool IsPlayerInSight()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, PlayerStateMachine.instance.transform.position - transform.position, 1000, LayerMask.GetMask("Player"));
+        if (hit.collider != null)
+        {
+            return hit.collider.tag == "Player";
         }
+        return false;
+    }
 
-        colls = Physics2D.OverlapCircleAll(weapon.position, rayonAttack);
+    public void HandleAttack()
+    {
+        float distance = GetDistance();
+        bool isInSight = IsPlayerInSight();
 
-        VUE = false;
-        foreach (Collider2D truc in colls) {
-            if (truc.tag == "Player") {
-                patPatrol.enabled = false;
-                if (!reloading) {
-                    VUE = true;
-                    reloading = true;
-                    anim.SetTrigger("attack");
-                    StartCoroutine(reload());
-                }
-                break;
+        if (distance <= 1.5f && isInSight)
+        {
+            timer += Time.deltaTime;
+            if (timer > cooldown)
+            {
+                Debug.Log("attack!");
+                PlayerStateMachine.instance.DecreaseStat(StatName.Health, degats);
+                timer = 0;
             }
-        }
-        if(!VUE && patPatrol.enabled == false) {
-            patPatrol.enabled = true;
-        }
-    }
-
-    IEnumerator reload() {
-        yield return new WaitForSeconds(cooldown);
-        reloading = false;
-    }
-
-    public void PIF() {
-        colls = Physics2D.OverlapCircleAll(weapon.position, rayonAttack);
-        foreach (Collider2D truc in colls) {
-            if (truc.tag == "Player") {
-                truc.SendMessage("takeDamage", degats);
-                if (effect != null) {
-                    effectSave = Instantiate(effect, truc.ClosestPoint(coll.bounds.center), Quaternion.identity);
-                    direction = truc.ClosestPoint(coll.bounds.center) - (Vector2)coll.bounds.center;
-                    direction.Normalize();
-                    angleEffect = Vector3.SignedAngle(transform.up, direction, Vector3.forward);
-                    effectSave.transform.rotation = Quaternion.Euler(0, 0, -angleEffect);
-                }
-
-                Destroy(effectSave, 2f);
+            else
+            {
+                //patPatrol.enabled = true;
             }
         }
     }
+    public void Patrol()
+    {
+        if (waypoints.Length == 0)
+        {
+            return;//le code s'arrete
+        }
 
-    private void OnDrawGizmos() {
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawWireSphere(weapon.position, rayonAttack);
+
+        if (transform.position == waypoints[currentIndex].position)
+        {
+            if (currentIndex == waypoints.Length - 1)
+            {
+                currentIndex = 0;
+            }
+            else
+            {
+                currentIndex++;
+            }
+
+        }
+        else
+        {
+            transform.position = Vector3.MoveTowards(transform.position, waypoints[currentIndex].position, 2.5f * Time.deltaTime);
+        }
+
+    }
+
+    private void OnDrawGizmos()
+    {
+        if(PlayerStateMachine.instance != null)
+        {
+            Ray ray = new Ray();
+            ray.direction = PlayerStateMachine.instance.transform.position - transform.position;
+            ray.origin = transform.position;
+            Gizmos.DrawRay(ray);
+        }
+        
     }
 }
+

@@ -2,6 +2,7 @@ using Serilog;
 using Serilog.Core;
 using UnityEngine;
 using UnityEditor;
+using System.Linq;
 
 
 #nullable enable
@@ -136,6 +137,8 @@ namespace Meryel.UnityCodeAssist.Editor.Logger
             _memorySink ??= new MemorySink(outputTemplate);
             config = config.WriteTo.Sink(_memorySink, fileMinLevel, null);
 
+            config = config.Destructure.With(new MyDestructuringPolicy());
+
             Serilog.Log.Logger = config.CreateLogger();
             //switchableLogger.Set(config.CreateLogger(), disposePrev: true);
 
@@ -162,5 +165,22 @@ namespace Meryel.UnityCodeAssist.Editor.Logger
         //**-- UI for these two
         static bool OptionsIsLoggingToFile => true;
         static bool OptionsIsLoggingToOutputWindow => true;
+    }
+
+    public class MyDestructuringPolicy : IDestructuringPolicy
+    {
+        // serilog cannot destruct StringArrayContainer by default, so do it manually
+        public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Serilog.Events.LogEventPropertyValue? result)
+        {
+            if (value is Synchronizer.Model.StringArrayContainer sac)
+            {
+                var items = sac.Container.Select(item => propertyValueFactory.CreatePropertyValue(item, true));
+                result = new Serilog.Events.SequenceValue(items);
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
     }
 }

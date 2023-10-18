@@ -86,7 +86,12 @@ namespace Meryel.UnityCodeAssist.Editor
             var type = GetType123(typeName);
 
             if (type == null)
+            {
+                // Possibly a class has been created in Visual Studio, and these changes are not reflected in Unity domain yet
+                // We can force Unity to recompile and get the type, but since there will be no instance of that type, it won't be of any use, will be just a performance burden
+                Serilog.Log.Debug("{Type} type couldn't be found", typeName);
                 return false;
+            }
 
 
             var obj = GetObjectOfType(type, out var requestVerboseType);
@@ -104,22 +109,24 @@ namespace Meryel.UnityCodeAssist.Editor
                 return true;
             }
 
+            Serilog.Log.Debug("Instance of {Type} type couldn't be found", typeName);
             return false;
         }
 
         static UnityEngine.Object? GetObjectOfType(Type type, out bool requestVerboseType)
         {
+            requestVerboseType = false;
             var isMonoBehaviour = type.IsSubclassOf(typeof(MonoBehaviour));
             var isScriptableObject = type.IsSubclassOf(typeof(ScriptableObject));
-            
+
             if (!isMonoBehaviour && !isScriptableObject)
             {
-                Serilog.Log.Warning("{Type} is not a valid Unity object", type.ToString());
-                requestVerboseType = true;
+                // Possibly a class's base class changed from none to MonoBehaviour in Visual Studio, and these changes are not reflected in Unity domain yet
+                // We can force Unity to recompile and get the type correctly, but since there will be no instance of that type, it won't be of any use, will be just a performance burden
+                Serilog.Log.Debug("{Type} is not a valid Unity object", type.ToString());
+                //requestVerboseType = true;
                 return null;
             }
-            requestVerboseType = false;
-
 
             UnityEngine.Object? obj;
 
@@ -159,14 +166,18 @@ namespace Meryel.UnityCodeAssist.Editor
 
             try
             {
-                // Object.FindObjectOfType will not return Assets (meshes, textures, prefabs, ...) or inactive objects
+                // UnityEngine.Object.FindObjectOfType is deprecated in new versions of Unity
+#if UNITY_2022_3 || UNITY_2023_1_OR_NEWER
+                // Object.FindAnyObjectOfType doesn't return Assets (for example meshes, textures, or prefabs), or inactive objects. It also doesn't return objects that have HideFlags.DontSave set.
+                obj = UnityEngine.Object.FindAnyObjectByType(type);
+#else
+                // Object.FindObjectOfType will not return Assets (meshes, textures, prefabs, ...) or inactive objects. It will not return an object that has HideFlags.DontSave set.
                 obj = UnityEngine.Object.FindObjectOfType(type);
+#endif
             }
             catch (Exception ex)
             {
-                //var isMonoBehaviour = type.IsSubclassOf(typeof(MonoBehaviour));
-                //var isScriptableObject = type.IsSubclassOf(typeof(ScriptableObject));
-                Serilog.Log.Warning(ex, "FindObjectOfType failed for {Type}, mb:{isMB}, so:{isSO}", type.ToString(), isMonoBehaviour, isScriptableObject);
+                Serilog.Log.Warning(ex, "FindObjectOfType/FindAnyObjectByType failed for {Type}, mb:{isMB}, so:{isSO}", type.ToString(), isMonoBehaviour, isScriptableObject);
             }
 
             obj = getObjectToSend(obj, type);

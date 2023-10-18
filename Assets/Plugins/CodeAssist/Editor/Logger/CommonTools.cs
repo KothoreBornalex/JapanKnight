@@ -19,6 +19,13 @@ namespace Meryel.UnityCodeAssist.Editor
             return tagManagerPath;
         }
 
+        public static string GetInputManagerFilePath()
+        {
+            var projectPath = GetProjectPathRaw();
+            var inputManagerPath = Combine(projectPath, "ProjectSettings/InputManager.asset");
+            return inputManagerPath;
+        }
+
         public static string GetProjectPath()
         {
             var rawPath = GetProjectPathRaw();
