@@ -45,19 +45,9 @@ public interface IStatistics
     {
         Health,
         Armor,
-
-        Cloudys,
-        Lavaite,
-        Poiscaille,
-        Almenos,
-        Terrah,
-
-
-        Villager,
-        AllUnits,
-        Swordmen,
-        Lancer,
-        Cavalry
+        CurrentSpeed,
+        WalkSpeed,
+        RunSpeed
     }
 
     public void InitializeStats()
@@ -78,5 +68,15 @@ public interface IStatistics
     public void IncreaseStat(StatName statName, float increasingValue)
     {
         
+    }
+
+    public void ResetStat(StatName statName)
+    {
+
+    }
+
+    public float GetStat(StatName statName)
+    {
+        return 0.0f;
     }
 }
