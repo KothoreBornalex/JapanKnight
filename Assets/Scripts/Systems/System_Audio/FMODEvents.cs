@@ -35,6 +35,13 @@ public class FMODEvents : MonoBehaviour
     [SerializeField] public EventReference Player_WeaponEquiped;
 
 
+    [field: Header("Weapons_Sounds")]
+    [SerializeField] public EventReference Weapons_KatanaSlash;
+    [SerializeField] public EventReference Weapons_LanceSlash;
+    [SerializeField] public EventReference Weapons_PistolShot;
+    [SerializeField] public EventReference Weapons_FusilShot;
+
+
     public static FMODEvents instance;
 
     // Start is called before the first frame update

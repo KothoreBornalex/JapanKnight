@@ -79,4 +79,9 @@ public interface IStatistics
     {
         return 0.0f;
     }
+
+    public float GetMaxStat(StatName statName)
+    {
+        return 0.0f;
+    }
 }
