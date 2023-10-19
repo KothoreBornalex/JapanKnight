@@ -28,6 +28,8 @@ MonoBehaviour:
   - _statName: 4
     _statCurrentValue: 9
     _statMaxValue: 9
+  _staminaConsumptionRate: 13
+  _staminaRegenerationRate: 5
   _inputsSmoothing: 5
   _interactionRange: 1.27
   _jumpSpeed: 6

@@ -38,13 +38,8 @@ public class LevelManager : MonoBehaviour
 
 
 
-        //
-        //
-        //AudioManager.instance.SetMusic(MusicsEnum.LoadingScreenMusic);
-        //
-        //
-        //
-        //
+
+        AudioManager.instance.SetMusic(MusicsEnum.LoadingScreenMusic);
 
 
 
@@ -94,8 +89,11 @@ public class LevelManager : MonoBehaviour
         scene.allowSceneActivation = true;
         _loadingBarr.gameObject.SetActive(false);
 
+        AudioManager.instance.SetMusic(MusicsEnum.BaseMusic);
+
         //Make the fade Out appear and wait before it is done.
         _loadingAnimator.Play("FadeOut");
+
         await Task.Delay(2500);
         _loadingCanvas.SetActive(false);
 

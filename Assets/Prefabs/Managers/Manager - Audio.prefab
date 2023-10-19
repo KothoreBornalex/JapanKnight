@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5c03a34a8503744ca7ab0d70669347e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _startMusic: 0
   masterVolume: 1
   musicVolume: 0.6
   ambienceVolume: 1
@@ -95,11 +96,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   musicMainMenu:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: -988640926
+      Data2: 1179882789
+      Data3: -284459379
+      Data4: -663978689
+    Path: event:/Musics/MainMenuMusic
   ambienceMainMenu:
     Guid:
       Data1: 0
@@ -109,25 +110,25 @@ MonoBehaviour:
     Path: 
   UI_clickSound1:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: 976499044
+      Data2: 1222353346
+      Data3: 1199826586
+      Data4: 217277853
+    Path: event:/SFX/UI_ClickSound-1
   UI_selectSound1:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: -1829056128
+      Data2: 1285868085
+      Data3: -348079728
+      Data4: 1740426087
+    Path: event:/SFX/UI_SelectSound-1
   UI_hoverSound1:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: 575605899
+      Data2: 1229358072
+      Data3: -1425690479
+      Data4: -53593664
+    Path: event:/SFX/UI_HoverSound-1
   UI_writeSound1:
     Guid:
       Data1: 0
@@ -137,8 +138,57 @@ MonoBehaviour:
     Path: 
   UI_notifSound1:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: -610174169
+      Data2: 1243115052
+      Data3: 1031651481
+      Data4: -1748201149
+    Path: event:/SFX/UI_NotifSound-1
+  Player_Hurt:
+    Guid:
+      Data1: -1619962927
+      Data2: 1246316972
+      Data3: 705209015
+      Data4: -327873400
+    Path: event:/SFX/Player_Hurt
+  Player_Healed:
+    Guid:
+      Data1: 536733818
+      Data2: 1195179672
+      Data3: -2024129895
+      Data4: -41529175
+    Path: event:/SFX/Player_Healed
+  Player_WeaponEquiped:
+    Guid:
+      Data1: 317675562
+      Data2: 1238138787
+      Data3: 1105801389
+      Data4: -581360871
+    Path: event:/SFX/Player_WeaponEquiped
+  Weapons_KatanaSlash:
+    Guid:
+      Data1: 816351001
+      Data2: 1123362338
+      Data3: 704419968
+      Data4: -1425620755
+    Path: event:/SFX/Weapons_KatanaSlash
+  Weapons_LanceSlash:
+    Guid:
+      Data1: -2121037547
+      Data2: 1096495501
+      Data3: -1612876359
+      Data4: 1903309841
+    Path: event:/SFX/Weapons_LanceSlash
+  Weapons_PistolShot:
+    Guid:
+      Data1: 1397118787
+      Data2: 1338078736
+      Data3: 1832469674
+      Data4: 1822688168
+    Path: event:/SFX/Weapons_PistolShot
+  Weapons_FusilShot:
+    Guid:
+      Data1: -771820258
+      Data2: 1308475454
+      Data3: 230211768
+      Data4: -1531755465
+    Path: event:/SFX/Weapons_FusilShot
