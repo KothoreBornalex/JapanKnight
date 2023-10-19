@@ -17,6 +17,10 @@ public class enemyAttack : MonoBehaviour
     private float timer;
     [Range(0, 5)] public float cooldown;
 
+    public float attackProbability1 = 0.3f; // Probabilité d'attaque 1 (par exemple 30%)
+    public float attackProbability2 = 0.4f; // Probabilité d'attaque 2 (par exemple 40%)
+    public float attackProbability3 = 0.3f; // Probabilité d'attaque 3 (par exemple 30%)
+
 
 
     void Start() {
@@ -25,6 +29,12 @@ public class enemyAttack : MonoBehaviour
 
     void Update()
     {
+        timer += Time.deltaTime;
+        if (timer > cooldown)
+        {
+            timer = 0;
+            
+        }
         Patrol();
         HandleAttack();
     }
@@ -52,16 +62,18 @@ public class enemyAttack : MonoBehaviour
 
         if (distance <= 1.5f && isInSight)
         {
-            timer += Time.deltaTime;
-            if (timer > cooldown)
+            float random = Random.Range(0f, 1f);
+            if (random < attackProbability1)
             {
-                Debug.Log("attack!");
-                PlayerStateMachine.instance.DecreaseStat(StatName.Health, degats);
-                timer = 0;
+                Debug.Log("Attaque 1");
+            }
+            else if (random < attackProbability1 + attackProbability2)
+            {
+                Debug.Log("Attaque 2");
             }
             else
             {
-                //patPatrol.enabled = true;
+                Debug.Log("Attaque 3");
             }
         }
     }

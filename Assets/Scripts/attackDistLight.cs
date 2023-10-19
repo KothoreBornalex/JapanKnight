@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class attackDistLight : MonoBehaviour
 {
+    #region Variables
     public int degats = 1;
     public Transform weapon;                    // L'object qui va tirer votre projectile, doit être en enfant de votre personnage (exemple : Un pistolet)
     private Vector3 positionWeapon;             // Les coordonnées de l'arme, nous servira a positionner correctement l'arme quand on regarde a gauche
@@ -20,13 +21,10 @@ public class attackDistLight : MonoBehaviour
     private float angleProjectil;               // rotation que devra avoir projectile pour "regarder" dans la direction ou il va
 
     private SpriteRenderer skin;                // Le sprite du joueur, on va s'en servir pour savoir si il regarde à gauche ou a droite
+    #endregion
 
-    private Animator anim;                      // L'animator du joueur, ça nous permettra de lancer l'animation d'attaque quand on va tirer
-
-    public manaPlayer manaScript;
     void Start() {
         skin = GetComponent<SpriteRenderer>();  // On récupère le sprite renderer du personnage (pour savoir dans quelle direction il regarde)
-        anim = GetComponent<Animator>();        // On récupère son animator pour lancer l'animation d'attaque
         positionWeapon = weapon.localPosition;  // On enregistre la position local de l'arme, on l'utilisera pour retourner l'arme quand le joueur regarde à gauche
     }
 
@@ -44,17 +42,17 @@ public class attackDistLight : MonoBehaviour
                                                                                            // (Vector3.forward est la direction "Z" du jeu, pour spécifier l'axe de rotation autour duquel l'angle est mesuré.)
         weapon.rotation = Quaternion.Euler(0, 0, angleProjectil);// On fait pivoter l'arme dans la direction de la souris grace à l'angle qu'on vient de calculer.
 
-        if (!skin.flipX) {
+        /*if (!skin.flipX) {
             weapon.localPosition = positionWeapon;      // Si on regarde a droite, l'arme prend sa position de base
         }
 
         if (skin.flipX) {
             weapon.localPosition = new Vector3(-positionWeapon.x, positionWeapon.y, 0);    // Si on regarde a gauche, on inverse la position X (pas Y) de l'arme
-        }
+        }*/
 
 
         // Bien maintenant qu'on connait dans quelle direction le joueur vise, on check si le joueur appuis sur son bouton de tir (ici clic-droit) ET qu'il n'est pas entrain de recharger (reloading = false)
-        if (Input.GetButton("Fire2") && !reloading && manaScript.currentMana >= manaScript.manaCostPerShot) {
+        if (Input.GetButton("Fire2") && !reloading) {
 
             reloading = true;// On passe directement reloading en vrai histoire de ne pas pouvoir tirer 2 fois de suite
             projectilSave = Instantiate(projectil, weapon.position, Quaternion.Euler(0, 0, angleProjectil));// on fait apparaitre le projectile,
@@ -62,11 +60,8 @@ public class attackDistLight : MonoBehaviour
 
             projectilSave.GetComponent<Rigidbody2D>().velocity = direction * speedProjectil;// Et on fait avancer le projectile dans la direction qu'on a calculé
                                                                                             // plutôt
-            projectilSave.GetComponent<projectileLight>().degats = degats;
+            projectilSave.GetComponent<projectileBehaviour>().degats = degats;
             StartCoroutine(waitShoot());
-
-            manaScript.currentMana -= manaScript.manaCostPerShot;
-            Debug.Log(manaScript.currentMana);
         }
     }
 
