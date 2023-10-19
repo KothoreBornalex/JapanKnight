@@ -2,7 +2,9 @@ using NaughtyAttributes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Search;
 using UnityEngine;
+using static DroppedItem;
 using static IObjects;
 using static IStatistics;
 
@@ -23,6 +25,8 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
         Dead
     }
     [SerializeField] private PlayerState _playerState;
+    [SerializeField] private int _playerWeapon;
+
     #endregion
     [Space(25)]
 
@@ -37,9 +41,9 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
     [SerializeField] float _health;
     float _maxHealth;
 
-    [ProgressBar("Current Armor", "_maxArmor", EColor.Blue)]
-    [SerializeField] float _armor;
-    float _maxArmor;
+    [ProgressBar("Current Stamina", "_maxStamina", EColor.Blue)]
+    [SerializeField] float _stamina;
+    float _maxStamina;
     #endregion
     [Space(25)]
 
@@ -59,6 +63,10 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
 
     [SerializeField, Expandable] PlayerDataScriptableObject _playerDataScriptableObject;
     [SerializeField, Expandable] PlayerKeyBindsScriptableObject _keyBindsMap;
+    [SerializeField, Expandable] WeaponsScriptableObject _weaponsList;
+
+    [SerializeField] private Transform _weaponBone;
+    [SerializeField] private SpriteRenderer _playerSprite;
 
     #region OnValidate & Reset Functions
     private void OnValidate()
@@ -73,9 +81,9 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
                     _maxHealth = statistics._statMaxValue;
                     break;
 
-                case StatName.Armor:
-                    _armor = statistics._statCurrentValue;
-                    _maxArmor = statistics._statMaxValue;
+                case StatName.Stamina:
+                    _stamina = statistics._statCurrentValue;
+                    _maxStamina = statistics._statMaxValue;
                     break;
             }
 
@@ -107,7 +115,7 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
     {
         // Set Up Cursor
         Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.lockState = CursorLockMode.Locked;
 
         _rigidbody = GetComponent<Rigidbody2D>();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
@@ -122,6 +130,17 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
     private void Update()
     {
         HandlePlayerStateMachine();
+
+        if(_playerState == PlayerState.Dead)
+        {
+            return;
+        }
+        else
+        {
+            PlayerBaseAim();
+            HandlePlayerAttack();
+            HandleInteraction();
+        }
     }
 
 
@@ -196,8 +215,67 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
 
     #endregion
 
+    #region Global Player Systems
+    public void PlayerBaseAim()
+    {
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 direction = mousePosition - _weaponBone.position;
+        direction.z = 0;
+        direction.Normalize();
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion rotation = Quaternion.Euler(0, 0, angle);
+        _weaponBone.rotation = Quaternion.Slerp(_weaponBone.rotation, rotation, _playerDataScriptableObject.LookSpeed * Time.deltaTime);
+    }
 
 
+    public void HandlePlayerAttack()
+    {
+
+    }
+
+    public void HandleInteraction()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, _playerDataScriptableObject.InteractionRange);
+
+        /*
+        foreach (Collider collider in colliders)
+        {
+            if (TryGetComponent<>())
+            {
+
+            }
+        }
+        */
+    }
+
+
+    public void SetWeapon(Items weaponEnum)
+    {
+        AudioManager.instance.PlayOneShot_GlobalSound(FMODEvents.instance.Player_WeaponEquiped);
+
+        if (_playerWeapon != 0)
+        {
+            Instantiate<GameObject>(_weaponsList.WeaponsList[_playerWeapon].weaponDropped);
+        }
+
+        _playerWeapon = GetWeaponIndex(weaponEnum);
+        Instantiate<GameObject>(_weaponsList.WeaponsList[_playerWeapon].weaponPrefab, _weaponBone);
+    }
+
+    public int GetWeaponIndex(Items weaponEnum)
+    {
+        for (int i = 0; i < _weaponsList.WeaponsList.Count; i++)
+        {
+            if (_weaponsList.WeaponsList[i].weaponName == weaponEnum)
+            {
+                return i;
+            }
+        }
+
+        return 0;
+    }
+    #endregion
 
     #region Idle State Functions
     private void StartIdleBehavior()
@@ -245,6 +323,16 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
             horizontalInput -= 1.0f;
         }
 
+
+        if (horizontalInput > 0)
+        {
+            _playerSprite.flipX = true;
+        }
+        else if (horizontalInput < 0)
+        {
+            _playerSprite.flipX = false;
+        }
+
         _smoothVertical = Mathf.MoveTowards(_smoothVertical, verticalInput, Time.deltaTime * _playerDataScriptableObject.InputsSmoothing);
 
         _smoothHorizontal = Mathf.MoveTowards(_smoothHorizontal, horizontalInput, Time.deltaTime * _playerDataScriptableObject.InputsSmoothing);
@@ -252,14 +340,20 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
 
 
         // Sprinting
-        if (Input.GetKey(_keyBindsMap.Run))
+        if (Input.GetKey(_keyBindsMap.Run) && GetStat(StatName.Stamina) > 0)
         {
             SetStat(StatName.CurrentSpeed, GetStat(StatName.RunSpeed));
+            DecreaseStat(StatName.Stamina, 3.0f);
         }
         else
         {
             SetStat(StatName.CurrentSpeed, GetStat(StatName.WalkSpeed));
+            IncreaseStat(StatName.Stamina, 3.0f);
         }
+
+
+
+
 
         // Calculate movement vector
         Vector2 movement = new Vector2(_smoothHorizontal, _smoothVertical) * GetStat(StatName.CurrentSpeed);
@@ -287,11 +381,7 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
     #endregion
 
 
-
-
-
-
-
+  
     #region IStatistics Functions
 
     public void InitializeStats()
@@ -323,9 +413,14 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
         {
             if (stats._statName == statName)
             {
+                if (stats._statName == StatName.Health)
+                {
+                    AudioManager.instance.PlayOneShot_GlobalSound(FMODEvents.instance.Player_Hurt);
+                }
+
                 stats._statCurrentValue -= decreasingValue;
                 stats._statCurrentValue = Mathf.Clamp(stats._statCurrentValue, 0, stats._statMaxValue);
-
+                return;
             }
         }
 
@@ -338,9 +433,14 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
         {
             if (stats._statName == statName)
             {
+                if (stats._statName == StatName.Health)
+                {
+                    AudioManager.instance.PlayOneShot_GlobalSound(FMODEvents.instance.Player_Healed);
+                }
+
                 stats._statCurrentValue += increasingValue;
                 stats._statCurrentValue = Mathf.Clamp(stats._statCurrentValue, 0, stats._statMaxValue);
-
+                return;
             }
         }
 
@@ -374,4 +474,9 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
     }
 
     #endregion
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position, _playerDataScriptableObject.InteractionRange);
+    }
 }

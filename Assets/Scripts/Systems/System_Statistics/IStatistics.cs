@@ -44,7 +44,7 @@ public interface IStatistics
     public enum StatName
     {
         Health,
-        Armor,
+        Stamina,
         CurrentSpeed,
         WalkSpeed,
         RunSpeed
