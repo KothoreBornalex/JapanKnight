@@ -12,6 +12,8 @@ public class PlayerDataScriptableObject : ScriptableObject
     [Space(25)]
     [Header("Player Parameters")]
     [SerializeField, Range(0, 20)] float _inputsSmoothing = 2.5f;
+    [SerializeField, Range(0.5f, 10)] float _interactionRange = 1.0f;
+
     [SerializeField, Range(0, 20)] float _jumpSpeed = 6.0f;
     [SerializeField, Range(0.5f, 10)] float _lookSpeed = 2.0f;
 
@@ -32,6 +34,7 @@ public class PlayerDataScriptableObject : ScriptableObject
 
     public List<Statistics> PlayerStatistics { get => _playerStatistics; }
     public float InputsSmoothing { get => _inputsSmoothing;}
+    public float InteractionRange { get => _interactionRange;}
 
     #endregion
 

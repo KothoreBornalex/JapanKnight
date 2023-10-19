@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerStatistics:
   - _statName: 0
-    _statCurrentValue: 100
-    _statMaxValue: 100
+    _statCurrentValue: 10
+    _statMaxValue: 10
   - _statName: 1
     _statCurrentValue: 100
     _statMaxValue: 100
@@ -23,14 +23,15 @@ MonoBehaviour:
     _statCurrentValue: 0
     _statMaxValue: 10
   - _statName: 3
-    _statCurrentValue: 3
-    _statMaxValue: 3
+    _statCurrentValue: 5
+    _statMaxValue: 5
   - _statName: 4
-    _statCurrentValue: 6
-    _statMaxValue: 6
-  _inputsSmoothing: 4
+    _statCurrentValue: 9
+    _statMaxValue: 9
+  _inputsSmoothing: 5
+  _interactionRange: 1.27
   _jumpSpeed: 6
-  _lookSpeed: 2
+  _lookSpeed: 10
   _runningFOV: 65
   _speedToFOV: 4
   _timeToRunning: 2
