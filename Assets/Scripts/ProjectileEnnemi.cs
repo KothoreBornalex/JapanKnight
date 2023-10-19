@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class ProjectileBehaviour : MonoBehaviour
+public class ProjectileEnnemi : MonoBehaviour
 {
 
     // Script a mettre sur votre projectile que vous allez tirer depuis le script attackDIST

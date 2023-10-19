@@ -60,7 +60,7 @@ public class attackDistLight : MonoBehaviour
 
             projectilSave.GetComponent<Rigidbody2D>().velocity = direction * speedProjectil;// Et on fait avancer le projectile dans la direction qu'on a calculé
                                                                                             // plutôt
-            projectilSave.GetComponent<projectileBehaviour>().degats = degats;
+            //projectilSave.GetComponent<projectileEnnemi>().degats = degats;//On se prend les degats de l'ennemi
             StartCoroutine(waitShoot());
         }
     }
