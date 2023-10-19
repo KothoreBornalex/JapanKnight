@@ -15,6 +15,7 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
 
     #region Declaring Inspector Buttons
     [Button("Reset")] void LaunchReset() => Reset();
+    [Button("Receive Damage")] void Attack() => LoseLP();
 
     #endregion
 
@@ -26,6 +27,8 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
         Dead
     }
     [SerializeField] private PlayerState _playerState;
+    private float _deathTimer;
+
 
     [Header("Weapon Fields")]
     [SerializeField] private Items _playerWeaponName;
@@ -120,6 +123,11 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
         _playerStatistics = _playerDataScriptableObject.PlayerStatistics;
     }
 
+
+    private void LoseLP()
+    {
+        DecreaseStat(StatName.Health, (int)UnityEngine.Random.Range(1, 3));
+    }
     #endregion
 
     private void Awake()
@@ -155,8 +163,9 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
     private void Update()
     {
         HandlePlayerStateMachine();
+        ActualizedHUD();
 
-        if(_playerState == PlayerState.Dead)
+        if (_playerState == PlayerState.Dead)
         {
             return;
         }
@@ -165,7 +174,6 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
             
             HandlePlayerAttack();
             HandleInteraction();
-            ActualizedHUD();
 
             if (canRotate)
             {
@@ -189,8 +197,9 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
                         isAttacking = false;
                         canRotate = true;
                         weaponScript.StopAttack();
-
                     }
+
+
 
                     _playerWeaponTransform.localPosition = Vector3.Lerp(_playerWeaponTransform.localPosition, _weaponTargetPosition, Time.deltaTime * _weaponsList.WeaponsList[_playerWeaponIndex].smoothInSpeed);
                 }
@@ -292,6 +301,11 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
         _staminaSlider.value = GetStat(StatName.Stamina);
     }
     
+    public void PlayerDeath()
+    {
+        LevelManager.instance.LoadScene("GameScene");
+    }
+
 
     public void HandleInteraction()
     {
