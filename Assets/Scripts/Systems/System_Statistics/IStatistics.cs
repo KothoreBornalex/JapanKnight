@@ -44,20 +44,10 @@ public interface IStatistics
     public enum StatName
     {
         Health,
-        Armor,
-
-        Cloudys,
-        Lavaite,
-        Poiscaille,
-        Almenos,
-        Terrah,
-
-
-        Villager,
-        AllUnits,
-        Swordmen,
-        Lancer,
-        Cavalry
+        Stamina,
+        CurrentSpeed,
+        WalkSpeed,
+        RunSpeed
     }
 
     public void InitializeStats()
@@ -78,5 +68,20 @@ public interface IStatistics
     public void IncreaseStat(StatName statName, float increasingValue)
     {
         
+    }
+
+    public void ResetStat(StatName statName)
+    {
+
+    }
+
+    public float GetStat(StatName statName)
+    {
+        return 0.0f;
+    }
+
+    public float GetMaxStat(StatName statName)
+    {
+        return 0.0f;
     }
 }

@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08918446fc1b8bf4e86087c35710b03c, type: 3}
+  m_Name: WeaponsList
+  m_EditorClassIdentifier: 
+  _weaponsList:
+  - weaponName: 2
+    weaponDropped: {fileID: 1082301604987629952, guid: 8da56a7c23e37444ab9b43c75863801c, type: 3}
+    weaponPrefab: {fileID: 1136200465420451738, guid: 38817029a39902344a59af6c51a129a4, type: 3}
+    attackEffect: {fileID: 0}
+    attackProjectile: {fileID: 0}
+    isRangeWeapon: 0
+    weaonDamage: 1
+    attackTiming: 0.4
+    weaponCoolDown: 0.5
+    weaponRecoil: 1
+    smoothInSpeed: 15
+    smoothOutSpeed: 8
+  - weaponName: 3
+    weaponDropped: {fileID: 1082301604987629952, guid: c86447a4d6837d545acc31e61c05364f, type: 3}
+    weaponPrefab: {fileID: 1136200465420451738, guid: 86a39c9752769ba4fb0960807dc2a37a, type: 3}
+    attackEffect: {fileID: 0}
+    attackProjectile: {fileID: 0}
+    isRangeWeapon: 0
+    weaonDamage: 1
+    attackTiming: 0.3
+    weaponCoolDown: 0.35
+    weaponRecoil: 1.3
+    smoothInSpeed: 15
+    smoothOutSpeed: 8
+  - weaponName: 4
+    weaponDropped: {fileID: 9063399300965218607, guid: ac3fa74b81f23ad46b1ae29df588bff5, type: 3}
+    weaponPrefab: {fileID: 1136200465420451738, guid: 2728e5d7fc3882742956465397a45e8f, type: 3}
+    attackEffect: {fileID: 1136200465420451738, guid: 126f38ef550c3364fb8d108903cad7f4, type: 3}
+    attackProjectile: {fileID: 1136200465420451738, guid: 056ea98d07ea9ed4e90028db49056677, type: 3}
+    isRangeWeapon: 0
+    weaonDamage: 1
+    attackTiming: 0.25
+    weaponCoolDown: 0.3
+    weaponRecoil: -0.25
+    smoothInSpeed: 15
+    smoothOutSpeed: 25
+  - weaponName: 5
+    weaponDropped: {fileID: 1082301604987629952, guid: cc4232a55f25f6e46b60eb6d5fed94ad, type: 3}
+    weaponPrefab: {fileID: 1136200465420451738, guid: 422c8ccd634ae23459be71388324b339, type: 3}
+    attackEffect: {fileID: 1136200465420451738, guid: 35bcf1359eda3ab4ea4007980345f5f4, type: 3}
+    attackProjectile: {fileID: 1136200465420451738, guid: 344305d5cdae7b940a4be92ad8f5c841, type: 3}
+    isRangeWeapon: 0
+    weaonDamage: 1
+    attackTiming: 0.55
+    weaponCoolDown: 0.6
+    weaponRecoil: -0.6
+    smoothInSpeed: 10
+    smoothOutSpeed: 15
