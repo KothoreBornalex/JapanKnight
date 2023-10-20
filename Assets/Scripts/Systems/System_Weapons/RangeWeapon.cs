@@ -29,7 +29,6 @@ public class RangeWeapon : MonoBehaviour, IWeapon
         WeaponContactTrigger projectile = Instantiate<GameObject>(PlayerStateMachine.instance.WeaponsList.WeaponsList[currentWeapon].attackProjectile, _bulletSpawn.position, Quaternion.identity).GetComponent<WeaponContactTrigger>();
         projectile.direction = direction;
 
-
     }
 
     public void StopAttack()

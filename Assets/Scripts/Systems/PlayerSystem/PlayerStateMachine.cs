@@ -2,7 +2,6 @@ using NaughtyAttributes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.UI;
 using static DroppedItem;
@@ -15,6 +14,7 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
 
     #region Declaring Inspector Buttons
     [Button("Reset")] void LaunchReset() => Reset();
+    [Button("Receive Damage")] void Attack() => LoseLP();
 
     #endregion
 
@@ -26,6 +26,8 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
         Dead
     }
     [SerializeField] private PlayerState _playerState;
+    private float _deathTimer;
+
 
     [Header("Weapon Fields")]
     [SerializeField] private Items _playerWeaponName;
@@ -120,6 +122,11 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
         _playerStatistics = _playerDataScriptableObject.PlayerStatistics;
     }
 
+
+    private void LoseLP()
+    {
+        DecreaseStat(StatName.Health, (int)UnityEngine.Random.Range(1, 3));
+    }
     #endregion
 
     private void Awake()
@@ -155,17 +162,18 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
     private void Update()
     {
         HandlePlayerStateMachine();
+        ActualizedHUD();
 
-        if(_playerState == PlayerState.Dead)
+        if (_playerState == PlayerState.Dead)
         {
             return;
         }
         else
         {
-            
+            _playerSprite.color = Vector4.Lerp(_playerSprite.color, Color.white, Time.deltaTime * 3.0f);
+
             HandlePlayerAttack();
             HandleInteraction();
-            ActualizedHUD();
 
             if (canRotate)
             {
@@ -189,8 +197,9 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
                         isAttacking = false;
                         canRotate = true;
                         weaponScript.StopAttack();
-
                     }
+
+
 
                     _playerWeaponTransform.localPosition = Vector3.Lerp(_playerWeaponTransform.localPosition, _weaponTargetPosition, Time.deltaTime * _weaponsList.WeaponsList[_playerWeaponIndex].smoothInSpeed);
                 }
@@ -292,6 +301,11 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
         _staminaSlider.value = GetStat(StatName.Stamina);
     }
     
+    public void PlayerDeath()
+    {
+        LevelManager.instance.LoadScene("GameScene");
+    }
+
 
     public void HandleInteraction()
     {
@@ -317,14 +331,12 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
         {
             Destroy(_playerWeaponTransform.gameObject);
 
-            Instantiate<GameObject>(_weaponsList.WeaponsList[_playerWeaponIndex].weaponDropped, transform.position + new Vector3(1.5f, 0, 0), transform.rotation);
+            Instantiate<GameObject>(_weaponsList.WeaponsList[_playerWeaponIndex].weaponDropped, transform.position + new Vector3(3.5f, 0, 0), transform.rotation);
         }
 
 
         _playerWeaponIndex = GetWeaponIndex(weaponEnum);
         _playerWeaponName = weaponEnum;
-
-
 
 
         _playerWeaponTransform = Instantiate<GameObject>(_weaponsList.WeaponsList[_playerWeaponIndex].weaponPrefab, _weaponHolder).transform;
@@ -435,7 +447,7 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
     }
     private void IdleBehavior()
     {
-        Debug.Log("Idle Working properly");
+        //Debug.Log("Idle Working properly");
         IncreaseStat(StatName.Stamina, _playerDataScriptableObject.StaminaRegenerationRate * Time.deltaTime);
 
         CheckChangeStateCondition(_playerState);
@@ -534,7 +546,7 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
 
     private void StartDeadBehavior()
     {
-
+        LevelManager.instance.LoadScene("MainMenu");
     }
     private void DeadBehavior()
     {
@@ -580,6 +592,7 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
                 if (stats._statName == StatName.Health)
                 {
                     AudioManager.instance.PlayOneShot_GlobalSound(FMODEvents.instance.Player_Hurt);
+                    _playerSprite.color = Color.red;
                 }
 
                 stats._statCurrentValue -= decreasingValue;
@@ -600,6 +613,7 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
                 if (stats._statName == StatName.Health)
                 {
                     AudioManager.instance.PlayOneShot_GlobalSound(FMODEvents.instance.Player_Healed);
+                    _playerSprite.color = Color.green;
                 }
 
                 stats._statCurrentValue += increasingValue;
