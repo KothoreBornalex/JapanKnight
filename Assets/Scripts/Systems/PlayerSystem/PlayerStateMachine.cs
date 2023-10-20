@@ -171,7 +171,8 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
         }
         else
         {
-            
+            _playerSprite.color = Vector4.Lerp(_playerSprite.color, Color.white, Time.deltaTime * 3.0f);
+
             HandlePlayerAttack();
             HandleInteraction();
 
@@ -339,8 +340,6 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
         _playerWeaponName = weaponEnum;
 
 
-
-
         _playerWeaponTransform = Instantiate<GameObject>(_weaponsList.WeaponsList[_playerWeaponIndex].weaponPrefab, _weaponHolder).transform;
         weaponScript = _playerWeaponTransform.GetComponent<IWeapon>();
     }
@@ -449,7 +448,7 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
     }
     private void IdleBehavior()
     {
-        Debug.Log("Idle Working properly");
+        //Debug.Log("Idle Working properly");
         IncreaseStat(StatName.Stamina, _playerDataScriptableObject.StaminaRegenerationRate * Time.deltaTime);
 
         CheckChangeStateCondition(_playerState);
@@ -594,6 +593,7 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
                 if (stats._statName == StatName.Health)
                 {
                     AudioManager.instance.PlayOneShot_GlobalSound(FMODEvents.instance.Player_Hurt);
+                    _playerSprite.color = Color.red;
                 }
 
                 stats._statCurrentValue -= decreasingValue;
@@ -614,6 +614,7 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
                 if (stats._statName == StatName.Health)
                 {
                     AudioManager.instance.PlayOneShot_GlobalSound(FMODEvents.instance.Player_Healed);
+                    _playerSprite.color = Color.green;
                 }
 
                 stats._statCurrentValue += increasingValue;

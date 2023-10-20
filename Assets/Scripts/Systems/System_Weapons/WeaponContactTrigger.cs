@@ -6,8 +6,17 @@ using static DroppedItem;
 public class WeaponContactTrigger : MonoBehaviour
 {
     [SerializeField] private Items item;
+    [SerializeField] private Factions _targetedFaction;
     [SerializeField] private bool isLethal;
     public Vector3 direction;
+
+    public Factions TargetedFaction { get => _targetedFaction; set => _targetedFaction = value; }
+
+    public enum Factions
+    {
+        Player,
+        Enemy
+    }
 
     private void Update()
     {
@@ -16,10 +25,25 @@ public class WeaponContactTrigger : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (isLethal && collision.CompareTag("Enemy"))
+        if(_targetedFaction == Factions.Enemy)
         {
-            int index = PlayerStateMachine.instance.GetWeaponIndex(item);
-            collision.GetComponent<IStatistics>().DecreaseStat(IStatistics.StatName.Health, PlayerStateMachine.instance.WeaponsList.WeaponsList[index].weaonDamage);
+            if (isLethal && collision.CompareTag("Enemy"))
+            {
+                int index = PlayerStateMachine.instance.GetWeaponIndex(item);
+                collision.GetComponent<IStatistics>().DecreaseStat(IStatistics.StatName.Health, PlayerStateMachine.instance.WeaponsList.WeaponsList[index].weaonDamage);
+                Destroy(gameObject);
+            }
         }
+
+        if (_targetedFaction == Factions.Player)
+        {
+            if (isLethal && collision.CompareTag("Player"))
+            {
+                int index = PlayerStateMachine.instance.GetWeaponIndex(item);
+                collision.GetComponent<IStatistics>().DecreaseStat(IStatistics.StatName.Health, PlayerStateMachine.instance.WeaponsList.WeaponsList[index].weaonDamage);
+                Destroy(gameObject);
+            }
+        }
+
     }
 }
