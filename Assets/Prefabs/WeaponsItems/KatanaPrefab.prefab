@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: 2
-  isLethal: 0
+  isLethal: 1
 --- !u!61 &6875826686617774040
 BoxCollider2D:
   m_ObjectHideFlags: 0
