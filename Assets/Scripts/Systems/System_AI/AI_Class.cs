@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using static DroppedItem;
 using static IStatistics;
-using static UnityEditor.Progress;
 using static WeaponContactTrigger;
 
 public class AI_Class : MonoBehaviour, IStatistics
