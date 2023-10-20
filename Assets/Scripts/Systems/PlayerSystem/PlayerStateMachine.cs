@@ -332,7 +332,7 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
         {
             Destroy(_playerWeaponTransform.gameObject);
 
-            Instantiate<GameObject>(_weaponsList.WeaponsList[_playerWeaponIndex].weaponDropped, transform.position + new Vector3(1.5f, 0, 0), transform.rotation);
+            Instantiate<GameObject>(_weaponsList.WeaponsList[_playerWeaponIndex].weaponDropped, transform.position + new Vector3(3.5f, 0, 0), transform.rotation);
         }
 
 
@@ -547,7 +547,7 @@ public class PlayerStateMachine : MonoBehaviour, IStatistics
 
     private void StartDeadBehavior()
     {
-
+        LevelManager.instance.LoadScene("MainMenu");
     }
     private void DeadBehavior()
     {

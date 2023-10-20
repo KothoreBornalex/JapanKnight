@@ -55,7 +55,7 @@ public class LevelManager : MonoBehaviour
 
 
         //Switching to the loading screen scene.
-        UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+        UnityEngine.SceneManagement.SceneManager.LoadScene("LoadingScreen");
 
 
         //Activating the loading barr.
@@ -66,7 +66,7 @@ public class LevelManager : MonoBehaviour
         await Task.Delay(2500);
 
         //Loading the targeted scene.
-        var scene = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(2);
+        var scene = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
         scene.allowSceneActivation = false;
 
         do

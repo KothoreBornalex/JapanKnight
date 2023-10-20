@@ -44,6 +44,7 @@ public class AI_Class : MonoBehaviour, IStatistics
     [Header("Attack Fields")]
     private int _currentWeaponIndex;
     [SerializeField, Range(0, 5)] private float _attackFrequency;
+    [SerializeField] private Transform _bulletSpawnPoint;
     private float _attackTimer;
 
     private void Start()
@@ -85,7 +86,7 @@ public class AI_Class : MonoBehaviour, IStatistics
         {
             _destination.target = PlayerStateMachine.instance.transform;
         }
-        else
+        else if(Vector3.Distance(transform.position, PlayerStateMachine.instance.transform.position) <= _ai_Data.AttackRange)
         {
             _destination.target = null;
 
@@ -151,8 +152,7 @@ public class AI_Class : MonoBehaviour, IStatistics
 
             case Items.Fusil:
                 if (_attackTimer >= _weaponsList.WeaponsList[_currentWeaponIndex].weaponCoolDown)
-                    Debug.Log("Fusil Attack !!");
-                //HandleFusilAttack();
+                    HandleFusilAttack();
                 break;
 
         }
@@ -173,8 +173,11 @@ public class AI_Class : MonoBehaviour, IStatistics
     {
         int currentWeapon = GetWeaponIndex(_AI_Weapon);
 
+        AudioManager.instance.PlayOneShot_GlobalSound(FMODEvents.instance.Weapons_PistolShot);
+
+
         // Calculate the rotation of the pistol in degrees
-        float pistolRotation = transform.eulerAngles.z;
+        float pistolRotation = _bulletSpawnPoint.eulerAngles.z;
         float pistolRotationRad = pistolRotation * Mathf.Deg2Rad;
         Vector2 direction = new Vector2(Mathf.Cos(pistolRotationRad), Mathf.Sin(pistolRotationRad));
 
@@ -182,9 +185,31 @@ public class AI_Class : MonoBehaviour, IStatistics
         WeaponContactTrigger projectile = Instantiate<GameObject>(PlayerStateMachine.instance.WeaponsList.WeaponsList[currentWeapon].attackProjectile, transform.position, Quaternion.identity).GetComponent<WeaponContactTrigger>();
         projectile.direction = direction;
         projectile.TargetedFaction = Factions.Player;
+        _attackTimer = 0;
+
+
     }
 
+    public void HandleFusilAttack()
+    {
+        int currentWeapon = GetWeaponIndex(_AI_Weapon);
 
+        AudioManager.instance.PlayOneShot_GlobalSound(FMODEvents.instance.Weapons_FusilShot);
+
+
+        // Calculate the rotation of the pistol in degrees
+        float pistolRotation = _bulletSpawnPoint.eulerAngles.z;
+        float pistolRotationRad = pistolRotation * Mathf.Deg2Rad;
+        Vector2 direction = new Vector2(Mathf.Cos(pistolRotationRad), Mathf.Sin(pistolRotationRad));
+
+        //Instantiation Projectile
+        WeaponContactTrigger projectile = Instantiate<GameObject>(PlayerStateMachine.instance.WeaponsList.WeaponsList[currentWeapon].attackProjectile, transform.position, Quaternion.identity).GetComponent<WeaponContactTrigger>();
+        projectile.direction = direction;
+        projectile.TargetedFaction = Factions.Player;
+
+        _attackTimer = 0;
+
+    }
 
     public int GetWeaponIndex(Items weaponEnum)
     {

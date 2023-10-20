@@ -44,8 +44,8 @@ MonoBehaviour:
     attackProjectile: {fileID: 1136200465420451738, guid: 056ea98d07ea9ed4e90028db49056677, type: 3}
     isRangeWeapon: 0
     weaonDamage: 1
-    attackTiming: 0.3
-    weaponCoolDown: 0.35
+    attackTiming: 0.25
+    weaponCoolDown: 0.3
     weaponRecoil: -0.25
     smoothInSpeed: 15
     smoothOutSpeed: 25
